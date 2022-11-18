@@ -2,6 +2,7 @@ package com.example.madpractical10_20012011013
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -12,13 +13,19 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.example.madpractical10_20012011013.databinding.ActivityMapsBinding
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
-
+    private val TAG = "MapActivity"
     private lateinit var mMap: GoogleMap
     private lateinit var binding: ActivityMapsBinding
-
+    private var lat = -34.0
+    private var log = 151.0
+    private var title = "Marker in Sydney"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        val obj = intent.getSerializableExtra("Object") as Person
+        Log.i(TAG, "onCreate: Object:$obj")
+        lat = obj.Latitude
+        log = obj.Longitude
+        title = obj.Name
         binding = ActivityMapsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -27,7 +34,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
     }
-
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
@@ -39,10 +45,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
      */
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
-
         // Add a marker in Sydney and move the camera
-        val sydney = LatLng(-34.0, 151.0)
-        mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+        val sydney = LatLng(lat, log)
+        //googleMap.uiSettings.isZoomGesturesEnabled = true;
+
+        mMap.addMarker(MarkerOptions().position(sydney).title(title))
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney,8.0f))
     }
 }
